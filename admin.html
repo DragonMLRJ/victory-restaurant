@@ -233,20 +233,41 @@
                     <span>🚪</span>
                     <span>Déconnexion</span>
                 </button>
+                <button class="admin-btn secondary" onclick="addQuickTestOrder()" style="display: none;" id="testOrderBtn">
+                    <span>🧪</span>
+                    <span>Test Commande</span>
+                </button>
             </div>
         </div>
 
         <!-- Zone de connexion (affichée si non connecté) -->
         <div id="loginSection" class="login-required">
             <div class="login-icon">🔒</div>
-            <h2 style="color: var(--primary-color); margin-bottom: var(--spacing-lg);">Accès Administrateur Requis</h2>
+            <h2 style="color: var(--primary-color); margin-bottom: var(--spacing-lg);">Accès Administrateur</h2>
             <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
                 Cette page est réservée aux administrateurs autorisés du restaurant Victory.
             </p>
-            <button class="admin-btn" onclick="showLoginModal()">
-                <span>🔐</span>
-                <span>Se Connecter</span>
-            </button>
+            
+            <!-- Direct Login Form -->
+            <div class="admin-login-form" style="max-width: 400px; margin: 0 auto;">
+                <div style="margin-bottom: var(--spacing-md);">
+                    <label for="directUsername" style="display: block; margin-bottom: var(--spacing-xs); color: var(--text-primary); font-weight: 600;">Nom d'utilisateur:</label>
+                    <input type="text" id="directUsername" 
+                           style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--border-radius-lg); background: var(--bg-card); color: var(--text-primary); font-size: 1rem;"
+                           placeholder="Votre nom d'utilisateur">
+                </div>
+                <div style="margin-bottom: var(--spacing-lg);">
+                    <label for="directPassword" style="display: block; margin-bottom: var(--spacing-xs); color: var(--text-primary); font-weight: 600;">Mot de passe:</label>
+                    <input type="password" id="directPassword" 
+                           style="width: 100%; padding: var(--spacing-md); border: 2px solid var(--border-color); border-radius: var(--border-radius-lg); background: var(--bg-card); color: var(--text-primary); font-size: 1rem;"
+                           placeholder="Votre mot de passe">
+                </div>
+                <button class="admin-btn" onclick="directLogin()" style="width: 100%; justify-content: center;">
+                    <span>🔐</span>
+                    <span>Se Connecter</span>
+                </button>
+                <div id="loginStatus" style="margin-top: var(--spacing-md); text-align: center; color: var(--text-secondary);"></div>
+            </div>
         </div>
 
         <!-- Dashboard Admin (affiché si connecté) -->
@@ -358,6 +379,8 @@
     <script src="enhanced.js"></script>
     <script src="auth.js"></script>
     <script src="admin-dashboard.js"></script>
+    <script src="admin-dashboard-enhanced.js"></script>
+    <script src="sample-data-generator.js"></script>
     
     <!-- Firebase CDN (optionnel - décommentez pour activer Firebase) -->
     <!-- 
@@ -376,6 +399,9 @@
             // Initialiser le thème
             initializeTheme();
             
+            // Restore admin session from localStorage
+            restoreAdminSession();
+            
             // Vérifier l'authentification
             checkAdminAuth();
             
@@ -383,6 +409,101 @@
             if (authState && authState.isAuthenticated) {
                 loadAdminDashboard();
             }
+        });
+
+        // Restore admin session on page load
+        function restoreAdminSession() {
+            try {
+                const savedAuth = localStorage.getItem('victoryAdminAuth');
+                if (savedAuth) {
+                    const authData = JSON.parse(savedAuth);
+                    if (authData.sessionExpiry && new Date().getTime() < authData.sessionExpiry) {
+                        // Session still valid
+                        authState.isAuthenticated = true;
+                        authState.sessionExpiry = authData.sessionExpiry;
+                        console.log('🔐 Session admin restaurée');
+                    } else {
+                        // Session expired
+                        localStorage.removeItem('victoryAdminAuth');
+                        console.log('🔐 Session admin expirée');
+                    }
+                }
+            } catch (error) {
+                console.error('Erreur lors de la restauration de session:', error);
+                localStorage.removeItem('victoryAdminAuth');
+            }
+        }
+
+        // Direct login function for admin page
+        function directLogin() {
+            const username = document.getElementById('directUsername').value.trim();
+            const password = document.getElementById('directPassword').value;
+            const statusDiv = document.getElementById('loginStatus');
+            
+            if (!username || !password) {
+                statusDiv.innerHTML = '<span style="color: #ff4757;">⚠️ Veuillez remplir tous les champs</span>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<span style="color: #3742fa;">🔄 Connexion en cours...</span>';
+            
+            // Check credentials
+            if (username === ADMIN_CONFIG.username && password === ADMIN_CONFIG.password) {
+                // Successful login
+                authState.isAuthenticated = true;
+                authState.loginAttempts = 0;
+                authState.sessionExpiry = new Date().getTime() + ADMIN_CONFIG.sessionDuration;
+                
+                localStorage.setItem('victoryAdminAuth', JSON.stringify({
+                    sessionExpiry: authState.sessionExpiry
+                }));
+                
+                localStorage.removeItem('victoryAdminBlock');
+                
+                statusDiv.innerHTML = '<span style="color: #2ed573;">✅ Connexion réussie!</span>';
+                
+                setTimeout(() => {
+                    showAdminDashboard();
+                    showNotification('Connexion administrateur réussie! 🎉', 'success');
+                }, 500);
+                
+            } else {
+                // Failed login
+                authState.loginAttempts++;
+                statusDiv.innerHTML = '<span style="color: #ff4757;">❌ Identifiants incorrects</span>';
+                
+                // Clear password field
+                document.getElementById('directPassword').value = '';
+                document.getElementById('directPassword').focus();
+                
+                if (authState.loginAttempts >= ADMIN_CONFIG.maxAttempts) {
+                    statusDiv.innerHTML = '<span style="color: #ff4757;">🔒 Accès bloqué pour sécurité</span>';
+                    document.getElementById('directUsername').disabled = true;
+                    document.getElementById('directPassword').disabled = true;
+                    document.querySelector('button[onclick="directLogin()"]').disabled = true;
+                }
+            }
+        }
+
+        // Add Enter key support for login
+        document.addEventListener('DOMContentLoaded', function() {
+            // ... existing DOMContentLoaded code ...
+            
+            // Add enter key support for login form
+            setTimeout(() => {
+                const usernameField = document.getElementById('directUsername');
+                const passwordField = document.getElementById('directPassword');
+                
+                if (usernameField && passwordField) {
+                    [usernameField, passwordField].forEach(field => {
+                        field.addEventListener('keypress', function(e) {
+                            if (e.key === 'Enter') {
+                                directLogin();
+                            }
+                        });
+                    });
+                }
+            }, 100);
         });
         
         function checkAdminAuth() {
@@ -397,13 +518,18 @@
         function showLoginSection() {
             document.getElementById('loginSection').style.display = 'block';
             document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'none';
+            document.getElementById('testOrderBtn').style.display = 'none';
         }
         
         function showAdminDashboard() {
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('adminDashboard').style.display = 'block';
             document.getElementById('logoutBtn').style.display = 'inline-flex';
-            loadAdminDashboard();
+            document.getElementById('testOrderBtn').style.display = 'inline-flex';
+            
+            // Initialize the enhanced professional dashboard
+            initEnhancedDashboard();
         }
         
         function loadAdminDashboard() {
