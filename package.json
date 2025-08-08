@@ -1,0 +1,98 @@
+{
+  "name": "victory-restaurant",
+  "version": "1.0.0",
+  "description": "Application web moderne pour restaurant fast-food à Brazzaville, République du Congo",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx live-server --port=3000 --open=index.html",
+    "admin": "npx live-server --port=3000 --open=admin.html",
+    "build": "echo 'Building Victory Restaurant...' && npm run validate",
+    "validate": "npm run validate:html && npm run validate:security",
+    "validate:html": "echo 'Validating HTML files...' && ls *.html",
+    "validate:security": "echo 'Security check...' && node scripts/security-check.js",
+    "setup": "node scripts/setup.js",
+    "firebase:init": "firebase init hosting",
+    "firebase:deploy": "firebase deploy",
+    "github:setup": "node scripts/github-setup.js",
+    "backup": "node scripts/backup-data.js",
+    "test": "npm run validate",
+    "clean": "rm -rf node_modules/.cache && rm -rf .firebase",
+    "update": "npm update && echo 'Victory Restaurant updated!'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VOTRE-USERNAME/victory-restaurant.git"
+  },
+  "keywords": [
+    "restaurant",
+    "fast-food",
+    "pwa",
+    "firebase",
+    "brazzaville",
+    "congo",
+    "delivery",
+    "food-ordering",
+    "javascript",
+    "html5",
+    "css3"
+  ],
+  "author": {
+    "name": "Victory Restaurant Team",
+    "email": "contact@victory-restaurant.com",
+    "url": "https://victory-restaurant.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VOTRE-USERNAME/victory-restaurant/issues"
+  },
+  "homepage": "https://VOTRE-USERNAME.github.io/victory-restaurant",
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "firebase-tools": "^12.0.0"
+  },
+  "optionalDependencies": {
+    "prettier": "^3.0.0",
+    "eslint": "^8.0.0"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "config": {
+    "port": 3000,
+    "host": "localhost"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie <= 11"
+  ],
+  "pwa": {
+    "name": "Victory Restaurant",
+    "short_name": "Victory",
+    "theme_color": "#ff6b00",
+    "background_color": "#1a1a1a",
+    "display": "standalone",
+    "orientation": "portrait"
+  },
+  "victory": {
+    "version": "1.0.0",
+    "lastUpdate": "2025",
+    "features": [
+      "PWA Ready",
+      "Firebase Integration", 
+      "Admin Dashboard",
+      "Dark/Light Mode",
+      "Responsive Design",
+      "GitHub Pages Deploy"
+    ],
+    "locations": [
+      "Brazzaville",
+      "République du Congo"
+    ],
+    "languages": [
+      "fr"
+    ]
+  }
+}

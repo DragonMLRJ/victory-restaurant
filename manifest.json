@@ -1,0 +1,89 @@
+{
+  "name": "Victory Restaurant Brazzaville",
+  "short_name": "Victory",
+  "description": "Le meilleur fast-food de Brazzaville - Livraison rapide et saveurs inoubliables",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#ff6b00",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "fr",
+  "dir": "ltr",
+  "categories": ["food", "business", "shopping"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23ff6b00'/><text x='96' y='130' font-size='100' text-anchor='middle' fill='%23000'>🏆</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23ff6b00'/><text x='256' y='350' font-size='280' text-anchor='middle' fill='%23000'>🏆</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 144 144'><rect width='144' height='144' fill='%23ff6b00'/><text x='72' y='100' font-size='80' text-anchor='middle' fill='%23000'>🏆</text></svg>",
+      "sizes": "144x144",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1280 720'><rect width='1280' height='720' fill='%231a1a1a'/><rect x='0' y='0' width='1280' height='80' fill='%23ff6b00'/><text x='50' y='50' font-size='32' fill='%23000' font-weight='bold'>🏆 VICTORY</text><rect x='40' y='120' width='1200' height='200' rx='20' fill='%23ff6b00'/><text x='640' y='200' font-size='48' text-anchor='middle' fill='%23000' font-weight='bold'>Bienvenue chez Victory!</text><text x='640' y='250' font-size='24' text-anchor='middle' fill='%23000'>Le meilleur fast-food de Brazzaville</text></svg>",
+      "sizes": "1280x720",
+      "type": "image/svg+xml",
+      "form_factor": "wide",
+      "label": "Page d'accueil Victory Restaurant"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'><rect width='390' height='844' fill='%231a1a1a'/><rect x='0' y='0' width='390' height='70' fill='%23ff6b00'/><text x='20' y='45' font-size='18' fill='%23000' font-weight='bold'>🏆 VICTORY</text><text x='195' y='130' font-size='24' text-anchor='middle' fill='%23ff6b00'>Notre Menu</text><rect x='20' y='160' width='350' height='100' rx='10' fill='%232d2d2d' stroke='%23ff6b00' stroke-width='2'/><text x='30' y='190' font-size='16' fill='%23ff6b00'>🍔 Victory Burger</text><text x='30' y='210' font-size='12' fill='%23ccc'>Bœuf, fromage, salade, tomate</text><text x='280' y='230' font-size='14' fill='%23ff6b00' font-weight='bold'>2500 FCFA</text></svg>",
+      "sizes": "390x844",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Menu mobile Victory Restaurant"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Commander",
+      "short_name": "Menu",
+      "description": "Accéder directement au menu pour commander",
+      "url": "/?section=menu",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%23ff6b00'/><text x='48' y='65' font-size='50' text-anchor='middle'>🍔</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Suivre commande",
+      "short_name": "Suivi",
+      "description": "Suivre le statut de votre commande",
+      "url": "/?section=track",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><rect width='96' height='96' fill='%23ff6b00'/><text x='48' y='65' font-size='50' text-anchor='middle'>🏍️</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+victory",
+      "url": "/?order=%s"
+    }
+  ]
+}

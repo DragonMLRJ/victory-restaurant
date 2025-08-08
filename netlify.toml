@@ -1,0 +1,52 @@
+[build]
+  publish = "."
+
+# Headers de sécurité
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Cache pour les ressources statiques
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Cache plus court pour HTML
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+# Redirection SPA (optionnel pour app complexe)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin"]}
+
+# Redirections d'URL propres (optionnel)
+[[redirects]]
+  from = "/menu"
+  to = "/?section=menu"
+  status = 301
+
+[[redirects]]
+  from = "/admin"
+  to = "/?section=admin"
+  status = 301
+
+[[redirects]]
+  from = "/suivi"
+  to = "/?section=track"
+  status = 301

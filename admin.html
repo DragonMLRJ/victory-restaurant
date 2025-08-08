@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Victory Restaurant - Administration</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Panneau d'administration Victory Restaurant - Accès restreint">
+    <meta name="theme-color" content="#ff6b00">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+    <style>
+        /* Styles spécifiques à la page admin */
+        body {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+        }
+        
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+        
+        .admin-header {
+            background: var(--bg-card);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-xl);
+            border: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+            box-shadow: 0 10px 40px var(--shadow-color);
+        }
+        
+        .admin-title {
+            color: var(--primary-color);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .admin-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .admin-btn {
+            background: var(--primary-color);
+            color: var(--text-inverse);
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .admin-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+        
+        .admin-btn.secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .admin-btn.danger {
+            background: var(--error-color);
+        }
+        
+        .login-required {
+            background: var(--bg-card);
+            padding: var(--spacing-xl);
+            border-radius: var(--border-radius-xl);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            box-shadow: 0 10px 40px var(--shadow-color);
+        }
+        
+        .login-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-lg);
+            opacity: 0.6;
+        }
+        
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .quick-action-card {
+            background: var(--bg-card);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius-xl);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .quick-action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px var(--shadow-color);
+            border-color: var(--primary-color);
+        }
+        
+        .quick-action-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .recent-activity {
+            background: var(--bg-card);
+            border-radius: var(--border-radius-xl);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+        
+        .activity-header {
+            background: var(--primary-color);
+            color: var(--text-inverse);
+            padding: var(--spacing-lg);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .activity-item {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+        
+        .activity-time {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: var(--spacing-sm);
+            }
+            
+            .admin-actions {
+                flex-direction: column;
+            }
+            
+            .admin-btn {
+                justify-content: center;
+            }
+            
+            .stats-overview,
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header Admin -->
+        <div class="admin-header">
+            <h1 class="admin-title">
+                <span>🔐</span>
+                <span>Administration Victory</span>
+            </h1>
+            <p class="admin-subtitle">Panneau de contrôle du restaurant - Accès sécurisé</p>
+            
+            <div class="admin-actions">
+                <button class="theme-toggle admin-btn secondary" onclick="toggleTheme()" title="Changer le thème">
+                    <span class="theme-icon">🌙</span>
+                    <span>Thème</span>
+                </button>
+                <a href="index.html" class="admin-btn secondary">
+                    <span>🏠</span>
+                    <span>Site Public</span>
+                </a>
+                <button id="logoutBtn" class="admin-btn danger" onclick="logoutAdmin()" style="display: none;">
+                    <span>🚪</span>
+                    <span>Déconnexion</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Zone de connexion (affichée si non connecté) -->
+        <div id="loginSection" class="login-required">
+            <div class="login-icon">🔒</div>
+            <h2 style="color: var(--primary-color); margin-bottom: var(--spacing-lg);">Accès Administrateur Requis</h2>
+            <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+                Cette page est réservée aux administrateurs autorisés du restaurant Victory.
+            </p>
+            <button class="admin-btn" onclick="showLoginModal()">
+                <span>🔐</span>
+                <span>Se Connecter</span>
+            </button>
+        </div>
+
+        <!-- Dashboard Admin (affiché si connecté) -->
+        <div id="adminDashboard" style="display: none;">
+            
+            <!-- Statistiques Overview -->
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-number" id="todayOrders">47</div>
+                    <div>Commandes Aujourd'hui</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="todayRevenue">125,500</div>
+                    <div>CA Aujourd'hui (FCFA)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingOrders">8</div>
+                    <div>Commandes en Cours</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="avgDeliveryTime">23min</div>
+                    <div>Temps Moyen Livraison</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="monthlyRevenue">3,584,000</div>
+                    <div>CA Mensuel (FCFA)</div>
+                </div>
+            </div>
+
+            <!-- Actions Rapides -->
+            <div class="quick-actions">
+                <div class="quick-action-card" onclick="showOrdersManager()">
+                    <div class="quick-action-icon">📋</div>
+                    <h3 style="color: var(--primary-color); margin-bottom: var(--spacing-xs);">Gestion Commandes</h3>
+                    <p style="color: var(--text-secondary);">Voir et gérer toutes les commandes</p>
+                </div>
+                
+                <div class="quick-action-card" onclick="showMenuManager()">
+                    <div class="quick-action-icon">🍔</div>
+                    <h3 style="color: var(--primary-color); margin-bottom: var(--spacing-xs);">Gestion Menu</h3>
+                    <p style="color: var(--text-secondary);">Modifier prix et disponibilité</p>
+                </div>
+                
+                <div class="quick-action-card" onclick="showReports()">
+                    <div class="quick-action-icon">📊</div>
+                    <h3 style="color: var(--primary-color); margin-bottom: var(--spacing-xs);">Rapports</h3>
+                    <p style="color: var(--text-secondary);">Statistiques et analyses</p>
+                </div>
+                
+                <div class="quick-action-card" onclick="showSettings()">
+                    <div class="quick-action-icon">⚙️</div>
+                    <h3 style="color: var(--primary-color); margin-bottom: var(--spacing-xs);">Paramètres</h3>
+                    <p style="color: var(--text-secondary);">Configuration restaurant</p>
+                </div>
+            </div>
+
+            <!-- Gestionnaire de Commandes -->
+            <div id="ordersManager" class="admin-section" style="display: none;">
+                <div class="orders-list">
+                    <div class="order-row order-header">
+                        <div>Commande #</div>
+                        <div>Client</div>
+                        <div>Total</div>
+                        <div>Heure</div>
+                        <div>Statut</div>
+                        <div>Actions</div>
+                    </div>
+                    <div id="ordersList">
+                        <!-- Les commandes seront chargées ici -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activité Récente -->
+            <div class="recent-activity">
+                <div class="activity-header">
+                    <span>📈</span>
+                    <span>Activité Récente</span>
+                </div>
+                <div id="recentActivity">
+                    <div class="activity-item">
+                        <div class="activity-icon">🛒</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Nouvelle commande #12346</div>
+                            <div class="activity-time">Il y a 2 minutes</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">✅</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Commande #12345 livrée</div>
+                            <div class="activity-time">Il y a 15 minutes</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">👨‍🍳</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Commande #12344 en préparation</div>
+                            <div class="activity-time">Il y a 25 minutes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script src="enhanced.js"></script>
+    <script src="auth.js"></script>
+    <script src="admin-dashboard.js"></script>
+    
+    <!-- Firebase CDN (optionnel - décommentez pour activer Firebase) -->
+    <!-- 
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
+    <script src="firebase-db.js"></script>
+    -->
+    
+    <script>
+        // Initialisation spécifique à la page admin
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔐 Page Admin Victory chargée');
+            
+            // Initialiser le thème
+            initializeTheme();
+            
+            // Vérifier l'authentification
+            checkAdminAuth();
+            
+            // Charger les données si connecté
+            if (authState && authState.isAuthenticated) {
+                loadAdminDashboard();
+            }
+        });
+        
+        function checkAdminAuth() {
+            // Utiliser le système d'auth existant
+            if (typeof authState !== 'undefined' && authState.isAuthenticated) {
+                showAdminDashboard();
+            } else {
+                showLoginSection();
+            }
+        }
+        
+        function showLoginSection() {
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('adminDashboard').style.display = 'none';
+        }
+        
+        function showAdminDashboard() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'inline-flex';
+            loadAdminDashboard();
+        }
+        
+        function loadAdminDashboard() {
+            // Charger les statistiques
+            updateAdminStats();
+            loadRecentOrders();
+            loadRecentActivity();
+        }
+        
+        function showOrdersManager() {
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById('ordersManager').style.display = 'block';
+            loadOrdersList();
+        }
+        
+        function showMenuManager() {
+            showNotification('Gestionnaire de menu - En développement 🚧', 'info');
+        }
+        
+        function showReports() {
+            showNotification('Rapports détaillés - En développement 📊', 'info');
+        }
+        
+        function showSettings() {
+            showNotification('Paramètres restaurant - En développement ⚙️', 'info');
+        }
+        
+        function loadOrdersList() {
+            const ordersList = document.getElementById('ordersList');
+            if (!ordersList) return;
+            
+            // Utiliser les commandes existantes
+            const orders = JSON.parse(localStorage.getItem('victoryOrders') || '[]');
+            
+            ordersList.innerHTML = orders.slice(0, 10).map(order => `
+                <div class="order-row">
+                    <div>#${order.orderNumber}</div>
+                    <div>${order.customer.name}</div>
+                    <div>${formatPrice(order.total)}</div>
+                    <div>${order.timestamp.split(' ')[1]}</div>
+                    <div>
+                        <select class="status-select" onchange="updateOrderStatusAdmin(this, ${order.orderNumber})">
+                            <option value="confirmée" ${order.status === 'confirmée' ? 'selected' : ''}>Confirmée</option>
+                            <option value="en préparation" ${order.status === 'en préparation' ? 'selected' : ''}>En préparation</option>
+                            <option value="prêt" ${order.status === 'prêt' ? 'selected' : ''}>Prêt</option>
+                            <option value="en livraison" ${order.status === 'en livraison' ? 'selected' : ''}>En livraison</option>
+                            <option value="livré" ${order.status === 'livré' ? 'selected' : ''}>Livré</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button class="admin-btn" onclick="viewOrderDetails(${order.orderNumber})" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">
+                            👁️ Voir
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function loadRecentActivity() {
+            // Simuler activité récente basée sur les commandes
+            const orders = JSON.parse(localStorage.getItem('victoryOrders') || '[]');
+            const recentActivity = document.getElementById('recentActivity');
+            
+            if (orders.length > 0) {
+                const recent = orders.slice(-3).reverse();
+                recentActivity.innerHTML = recent.map((order, index) => {
+                    const icons = ['🛒', '👨‍🍳', '✅'];
+                    const actions = ['Nouvelle commande', 'En préparation', 'Livrée'];
+                    
+                    return `
+                        <div class="activity-item">
+                            <div class="activity-icon">${icons[index % 3]}</div>
+                            <div class="activity-content">
+                                <div class="activity-title">${actions[index % 3]} #${order.orderNumber}</div>
+                                <div class="activity-time">Il y a ${(index + 1) * 10} minutes</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+        
+        function viewOrderDetails(orderNumber) {
+            const orders = JSON.parse(localStorage.getItem('victoryOrders') || '[]');
+            const order = orders.find(o => o.orderNumber == orderNumber);
+            
+            if (order) {
+                const details = `
+                    Commande #${order.orderNumber}
+                    Client: ${order.customer.name}
+                    Téléphone: ${order.customer.phone}
+                    Adresse: ${order.customer.address}
+                    Total: ${formatPrice(order.total)}
+                    Statut: ${order.status}
+                    Heure: ${order.timestamp}
+                    
+                    Articles:
+                    ${order.items.map(item => `- ${item.name} x${item.quantity} = ${formatPrice(item.price * item.quantity)}`).join('\n')}
+                `;
+                
+                alert(details);
+            }
+        }
+        
+        // Override des fonctions d'auth pour cette page
+        const originalShowSection = window.showSection;
+        window.showSection = function(sectionName) {
+            // Rediriger vers la page principale pour les sections publiques
+            if (['home', 'menu', 'track'].includes(sectionName)) {
+                window.location.href = `index.html?section=${sectionName}`;
+                return;
+            }
+            
+            // Gérer les sections admin
+            if (sectionName === 'admin') {
+                checkAdminAuth();
+            }
+        };
+        
+        // Override de la fonction de login pour rediriger vers le dashboard
+        const originalAttemptLogin = window.attemptLogin;
+        window.attemptLogin = function() {
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            
+            if (!username || !password) {
+                showNotification('Veuillez remplir tous les champs', 'error');
+                return;
+            }
+            
+            // Utiliser la même logique d'auth
+            if (username === ADMIN_CONFIG.username && password === ADMIN_CONFIG.password) {
+                // Connexion réussie
+                authState.isAuthenticated = true;
+                authState.loginAttempts = 0;
+                authState.sessionExpiry = new Date().getTime() + ADMIN_CONFIG.sessionDuration;
+                
+                localStorage.setItem('victoryAdminAuth', JSON.stringify({
+                    sessionExpiry: authState.sessionExpiry
+                }));
+                
+                localStorage.removeItem('victoryAdminBlock');
+                
+                closeLoginModal();
+                showAdminDashboard();
+                showNotification('Connexion administrateur réussie! 🎉', 'success');
+                
+            } else {
+                // Utiliser la logique d'échec existante
+                if (originalAttemptLogin) {
+                    originalAttemptLogin();
+                }
+            }
+        };
+    </script>
+</body>
+</html>

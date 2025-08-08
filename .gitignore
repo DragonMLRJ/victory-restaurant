@@ -1,0 +1,83 @@
+# Victory Restaurant - Configuration Git
+
+# Logs et données temporaires
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dossiers de dépendances
+node_modules/
+.npm
+.yarn-integrity
+
+# Fichiers d'environnement (si utilisés)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Fichiers de build temporaires
+dist/
+build/
+.cache/
+
+# Fichiers d'éditeur
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Systèmes d'exploitation
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Fichiers de sauvegarde
+*.bak
+*.backup
+*.tmp
+
+# Logs de déploiement
+deploy.log
+build.log
+
+# Données de test sensibles (si applicable)
+test-data/real-customers.json
+test-data/real-orders.json
+
+# Configuration Firebase locale (si utilisée)
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Clés et secrets (ne jamais commiter)
+secrets.js
+config.private.js
+*.pem
+*.key
+
+# Fichiers de cache
+.cache
+.parcel-cache
+
+# Coverage reports
+coverage/
+*.lcov
+
+# Fichiers temporaires Windows
+*.tmp
+*.temp
+
+# Dossier de documentation compilée (si applicable)
+docs/_build/
+
+# Fichiers de configuration locale
+.localconfig
+local-settings.json

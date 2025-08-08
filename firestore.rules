@@ -1,0 +1,115 @@
+// Victory Restaurant - Règles de Sécurité Firestore
+// Copiez ces règles dans Firebase Console > Firestore > Rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 📋 COMMANDES - Accès libre pour démo
+    // En production, restreindre selon vos besoins
+    match /orders/{orderId} {
+      allow read, write: if true;
+      
+      // Version production (commentée) :
+      // allow read: if true; // Lecture libre pour le suivi
+      // allow create: if true; // Création libre pour nouvelles commandes
+      // allow update: if request.auth != null; // Mise à jour admin seulement
+      // allow delete: if false; // Pas de suppression
+    }
+    
+    // 📊 STATISTIQUES - Lecture libre, écriture restreinte
+    match /statistics/{statId} {
+      allow read: if true;
+      allow write: if true; // En production: if request.auth != null
+    }
+    
+    // ⚙️ CONFIGURATION - Lecture libre, écriture admin
+    match /configuration/{configId} {
+      allow read: if true;
+      allow write: if true; // En production: if request.auth != null
+    }
+    
+    // 🍔 MENU - Lecture libre, écriture admin
+    match /menu/{menuId} {
+      allow read: if true;
+      allow write: if true; // En production: if request.auth != null
+    }
+    
+    // 👥 CLIENTS - Accès limité
+    match /customers/{customerId} {
+      allow read, write: if true; // En production: restreindre davantage
+    }
+    
+    // 📈 ANALYTICS - Lecture admin, écriture système
+    match /analytics/{analyticsId} {
+      allow read: if true; // En production: if request.auth != null
+      allow write: if true;
+    }
+    
+    // 🔐 SESSIONS ADMIN - Accès très restreint
+    match /admin_sessions/{sessionId} {
+      allow read, write: if false; // Désactivé pour cette version
+      // En production avec auth Firebase:
+      // allow read, write: if request.auth != null && request.auth.token.admin == true;
+    }
+    
+    // 📝 LOGS - Écriture seulement
+    match /logs/{logId} {
+      allow read: if true; // En production: if request.auth != null
+      allow create: if true;
+      allow update, delete: if false;
+    }
+    
+    // 🚫 RÈGLES PAR DÉFAUT - Tout le reste est interdit
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+/* 
+🔐 NOTES DE SÉCURITÉ POUR LA PRODUCTION:
+
+1. AUTHENTIFICATION FIREBASE:
+   - Activez Firebase Authentication
+   - Configurez les providers (email/password, Google, etc.)
+   - Remplacez "if true" par "if request.auth != null"
+
+2. RÔLES ADMIN:
+   - Ajoutez custom claims pour les admins
+   - Vérifiez "request.auth.token.admin == true"
+
+3. VALIDATION DES DONNÉES:
+   - Ajoutez des validations sur les champs
+   - Vérifiez les types et formats
+   - Limitez la taille des documents
+
+4. RATE LIMITING:
+   - Implémentez des limites de requêtes
+   - Utilisez Firebase App Check
+   - Surveillez les quotas
+
+5. MONITORING:
+   - Activez les alertes de sécurité
+   - Surveillez les logs d'accès
+   - Configurez des notifications d'anomalies
+
+EXEMPLE DE RÈGLE STRICTE POUR PRODUCTION:
+
+match /orders/{orderId} {
+  allow read: if resource.data.customer.phone == request.auth.token.phone_number
+              || request.auth.token.admin == true;
+  allow create: if request.auth != null 
+                && validateOrderData(request.resource.data);
+  allow update: if request.auth.token.admin == true;
+  allow delete: if false;
+}
+
+function validateOrderData(data) {
+  return data.keys().hasAll(['customer', 'items', 'total', 'timestamp'])
+         && data.total is number
+         && data.total > 0
+         && data.items is list
+         && data.items.size() > 0;
+}
+*/

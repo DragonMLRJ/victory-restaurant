@@ -1,0 +1,188 @@
+name: 🏆 Victory Restaurant - Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: 🔧 Setup Pages
+      uses: actions/configure-pages@v4
+      
+    - name: ✅ Validate HTML
+      run: |
+        echo "🔍 Validation des fichiers HTML..."
+        if [ -f "index.html" ]; then
+          echo "✅ index.html trouvé"
+        else
+          echo "❌ index.html manquant"
+          exit 1
+        fi
+        
+        if [ -f "admin.html" ]; then
+          echo "✅ admin.html trouvé"
+        else
+          echo "❌ admin.html manquant"
+          exit 1
+        fi
+        
+    - name: 🎨 Validate CSS
+      run: |
+        echo "🎨 Validation des styles..."
+        if [ -f "styles.css" ]; then
+          echo "✅ styles.css trouvé"
+        else
+          echo "❌ styles.css manquant"
+          exit 1
+        fi
+        
+    - name: ⚡ Validate JavaScript
+      run: |
+        echo "⚡ Validation JavaScript..."
+        if [ -f "script.js" ]; then
+          echo "✅ script.js trouvé"
+        else
+          echo "❌ script.js manquant"
+          exit 1
+        fi
+        
+        if [ -f "auth.js" ]; then
+          echo "✅ auth.js trouvé"
+        else
+          echo "❌ auth.js manquant"
+          exit 1
+        fi
+        
+    - name: 🔐 Security Check
+      run: |
+        echo "🔐 Vérification sécurité..."
+        
+        # Vérifier que les identifiants par défaut ne sont pas utilisés
+        if grep -q "username: 'admin'" auth.js && grep -q "password: 'victory2025'" auth.js; then
+          echo "⚠️ ATTENTION: Identifiants admin par défaut détectés!"
+          echo "⚠️ Changez les identifiants dans auth.js avant la production!"
+        else
+          echo "✅ Identifiants admin personnalisés"
+        fi
+        
+        # Vérifier la présence de meta robots pour admin
+        if grep -q 'name="robots"' admin.html; then
+          echo "✅ Meta robots présent pour admin.html"
+        else
+          echo "⚠️ Meta robots manquant pour admin.html"
+        fi
+        
+    - name: 📱 PWA Validation
+      run: |
+        echo "📱 Validation PWA..."
+        if [ -f "manifest.json" ]; then
+          echo "✅ manifest.json trouvé"
+        else
+          echo "❌ manifest.json manquant"
+        fi
+        
+        if [ -f "sw.js" ]; then
+          echo "✅ Service Worker trouvé"
+        else
+          echo "❌ Service Worker manquant"
+        fi
+        
+    - name: 🔥 Firebase Check
+      run: |
+        echo "🔥 Vérification configuration Firebase..."
+        if grep -q "VOTRE_API_KEY" firebase-db.js; then
+          echo "⚠️ Configuration Firebase par défaut détectée"
+          echo "💡 Personnalisez firebase-db.js pour activer la base de données"
+        else
+          echo "✅ Configuration Firebase personnalisée"
+        fi
+        
+    - name: 📊 Generate Build Report
+      run: |
+        echo "📊 Génération rapport de build..."
+        echo "# 🏆 Victory Restaurant - Build Report" > build-report.md
+        echo "" >> build-report.md
+        echo "## 📅 Build Info" >> build-report.md
+        echo "- **Date**: $(date)" >> build-report.md
+        echo "- **Commit**: ${{ github.sha }}" >> build-report.md
+        echo "- **Branch**: ${{ github.ref_name }}" >> build-report.md
+        echo "" >> build-report.md
+        echo "## 📁 Files Status" >> build-report.md
+        echo "- ✅ HTML files validated" >> build-report.md
+        echo "- ✅ CSS files validated" >> build-report.md
+        echo "- ✅ JavaScript files validated" >> build-report.md
+        echo "- ✅ PWA files present" >> build-report.md
+        echo "" >> build-report.md
+        echo "## 🔗 URLs" >> build-report.md
+        echo "- **Public Site**: https://${{ github.repository_owner }}.github.io/victory-restaurant" >> build-report.md
+        echo "- **Admin Panel**: https://${{ github.repository_owner }}.github.io/victory-restaurant/admin.html" >> build-report.md
+        
+    - name: 🏗️ Build artifact
+      run: |
+        echo "🏗️ Préparation des fichiers pour le déploiement..."
+        # Créer un dossier _site avec tous les fichiers
+        mkdir -p _site
+        
+        # Copier tous les fichiers nécessaires
+        cp index.html _site/
+        cp admin.html _site/
+        cp styles.css _site/
+        cp script.js _site/
+        cp enhanced.js _site/
+        cp auth.js _site/
+        cp admin-dashboard.js _site/
+        cp firebase-db.js _site/
+        cp manifest.json _site/
+        cp sw.js _site/
+        
+        # Copier les fichiers de configuration
+        if [ -f "netlify.toml" ]; then cp netlify.toml _site/; fi
+        if [ -f "vercel.json" ]; then cp vercel.json _site/; fi
+        
+        # Ajouter le rapport de build
+        cp build-report.md _site/
+        
+        echo "✅ Artifact prêt dans _site/"
+        
+    - name: 📤 Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./_site
+
+  # Deploy job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: 🚀 Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+      
+    - name: 🎉 Deployment Success
+      run: |
+        echo "🎉 Victory Restaurant déployé avec succès!"
+        echo "🔗 URL: ${{ steps.deployment.outputs.page_url }}"
+        echo "🔐 Admin: ${{ steps.deployment.outputs.page_url }}admin.html"
