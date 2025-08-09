@@ -813,3 +813,143 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 console.log('🏆 Victory Restaurant JavaScript loaded successfully!');
+
+
+// Emergency Button Handler
+function handleEmergency() {
+    // Numéros d'urgence au Congo-Brazzaville
+    const emergencyNumbers = {
+        police: '117',
+        pompiers: '118',
+        ambulance: '112',
+        general: '112'
+    };
+    
+    // Créer un modal d'urgence
+    const modal = document.createElement('div');
+    modal.className = 'emergency-modal';
+    modal.innerHTML = `
+        <div class="emergency-modal-content">
+            <h2 style="color: #ff0000; margin-bottom: 20px;">🆘 NUMÉROS D'URGENCE</h2>
+            <div class="emergency-numbers">
+                <a href="tel:117" class="emergency-number-btn">
+                    <span class="emergency-service">👮 POLICE</span>
+                    <span class="emergency-phone">117</span>
+                </a>
+                <a href="tel:118" class="emergency-number-btn">
+                    <span class="emergency-service">🚒 POMPIERS</span>
+                    <span class="emergency-phone">118</span>
+                </a>
+                <a href="tel:112" class="emergency-number-btn">
+                    <span class="emergency-service">🚑 AMBULANCE</span>
+                    <span class="emergency-phone">112</span>
+                </a>
+                <a href="tel:112" class="emergency-number-btn">
+                    <span class="emergency-service">📞 URGENCE GÉNÉRALE</span>
+                    <span class="emergency-phone">112</span>
+                </a>
+            </div>
+            <button onclick="closeEmergencyModal()" class="close-emergency-btn">Fermer</button>
+        </div>
+    `;
+    
+    // Ajouter les styles pour le modal
+    const style = document.createElement('style');
+    style.textContent = `
+        .emergency-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .emergency-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .emergency-numbers {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .emergency-number-btn {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #ff6b00, #ff8c00);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .emergency-number-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.4);
+        }
+        
+        .emergency-service {
+            font-size: 14px;
+        }
+        
+        .emergency-phone {
+            font-size: 20px;
+        }
+        
+        .close-emergency-btn {
+            padding: 10px 30px;
+            background: #666;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+        
+        .close-emergency-btn:hover {
+            background: #555;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    `;
+    
+    document.head.appendChild(style);
+    document.body.appendChild(modal);
+}
+
+// Fonction pour fermer le modal d'urgence
+function closeEmergencyModal() {
+    const modal = document.querySelector('.emergency-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Ajouter un écouteur pour la touche Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeEmergencyModal();
+    }
+});
+
+console.log('🆘 Emergency button functionality loaded!');

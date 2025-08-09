@@ -883,3 +883,75 @@ body {
         transition-duration: 0.01ms !important;
     }
 }
+
+/* Emergency Button Styles */
+.emergency-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff0000, #cc0000);
+    color: white;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4), 0 0 30px rgba(255, 0, 0, 0.2);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+.emergency-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 0, 0, 0.6), 0 0 40px rgba(255, 0, 0, 0.3);
+}
+
+.emergency-button:active {
+    transform: scale(0.95);
+}
+
+.emergency-icon {
+    font-size: 24px;
+    margin-bottom: 2px;
+}
+
+.emergency-text {
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4), 0 0 30px rgba(255, 0, 0, 0.2);
+    }
+    50% {
+        box-shadow: 0 4px 25px rgba(255, 0, 0, 0.6), 0 0 50px rgba(255, 0, 0, 0.4);
+    }
+    100% {
+        box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4), 0 0 30px rgba(255, 0, 0, 0.2);
+    }
+}
+
+/* Mobile responsiveness for emergency button */
+@media (max-width: 768px) {
+    .emergency-button {
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+    }
+    
+    .emergency-icon {
+        font-size: 20px;
+    }
+    
+    .emergency-text {
+        font-size: 9px;
+    }
+}
